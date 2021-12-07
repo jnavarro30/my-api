@@ -2,28 +2,37 @@ const express = require('express')
 const app = express()
 require('dotenv/config')
 
-const mongoose = require('mongoose')
-
-// import
-const petsRouter = require('./routes/pets.router')
-
 // body parser
 app.use(express.json())
 
+// mongodb connection
+const mongoose = require('mongoose')
+mongoose.connect(process.env.DB_CONNECTION, () => {
+    console.log('Database connecton established...')
+})
+
 // routes
+const petsRouter = require('./pets/pets.router')
+
 app.get('/', (req, res) => {
-    res.send('Welcome Home!')
+    res.send('Welcome Home!!!')
 })
 
 app.use('/pets', petsRouter)
 
-// database
-mongoose.connect(process.env.DB_CONNECTION, () => {
-    console.log('Database connection established...')
+// server
+app.listen(3000, () => {
+    console.log('Server running on port: 3000')
 })
 
-// server
-const PORT = 3000 || process.env.PORT
-app.listen(PORT, () => {
-    console.log(`Server is running on port: ${PORT}`)
+// error handlers
+app.use((req, res, next) => {
+    next({ status: 404, message: `Not found: ${req.originalUrl}` });
+  });
+
+app.use((error, req, res, next) => {
+    console.error(error)
+    const { status = 500, message = 'Something went wrong!' } = error
+    res.status(status).json({ error: message })
 })
+

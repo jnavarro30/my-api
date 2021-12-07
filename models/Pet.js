@@ -8,19 +8,18 @@ const PetSchema = mongoose.Schema({
     breed: {
         type: String,
         required: true
+    }, 
+    age: {
+        type: Number,
+        required: true
     },
     parents: [
         {
             name: {
-                type: String,
-                default: "None"
+                type: String
             }
         }
-    ],
-    time_stamp: {
-        type: Date,
-        default: Date.now
-    }
-})
+    ]
+}, { timestamps: true })
 
 module.exports = mongoose.model('Pet', PetSchema)
